@@ -1,6 +1,6 @@
 {
   "files": [],
-  "excludes": ["src/electron"],
+  "exclude": ["src/electron"],
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
