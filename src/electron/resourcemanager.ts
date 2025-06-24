@@ -1,20 +1,28 @@
 import osUtilts from "os-utils";
 import disk from 'diskusage';
+import os from 'os';
+import { BrowserWindow } from "electron";
 
 const PULL_INTERVAL = 500;
 
-export function pullResources() {
+export function pullResources(mainWindow:BrowserWindow) {
   setInterval(async () => {
     const cpuUsage = await getCpuUsage();
     const ramUsage = getRamUsage();
     const storageUsage = await getStorageUsage();
-
-    console.log({cpuUsage, ramUsage, storageUsage});
+    
+    mainWindow.webContents.send('stats', {cpuUsage, ramUsage, storageUsage});
   }, PULL_INTERVAL);
 }
 
 export async function getStaticData() {
   const totalStorage = await getStorageTotal();
+  const cpuModel = os.cpus()[0].model; // Name of first CPU, assuming 1 CPU
+  const totalMemoryGB = Math.floor(osUtilts.totalmem() / 1024);
+
+  return {
+    totalStorage, cpuModel, totalMemoryGB
+  }
 }
 
 function getCpuUsage() {
