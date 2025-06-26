@@ -1,6 +1,6 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
-import { isDev } from "./util.js";
+import { isDev, ipcHandle } from "./util.js";
 import { getStaticData, pullResources } from "./resourceManager.js";
 import { getPreloadPath } from "./pathResolver.js";
 
@@ -10,15 +10,20 @@ app.on("ready", () => {
       preload: getPreloadPath(),
     },
   });
-  if (isDev()) { // Open live server while in dev mode
-    mainWindow.loadURL('http://localhost:5123');
+  if (isDev()) {
+    // Open live server while in dev mode
+    mainWindow.loadURL("http://localhost:5123");
   } else {
     mainWindow.loadFile(path.join(app.getAppPath(), "/dist-react/index.html"));
   }
 
   pullResources(mainWindow);
 
-  ipcMain.handle("getStaticData", () => {
+  ipcHandle("getStaticData", () => {
     return getStaticData();
-  })
+  });
+
+  // ipcMain.handle("getStaticData", () => {
+  //   return getStaticData();
+  // });
 });
